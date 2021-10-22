@@ -35,13 +35,22 @@ import { renderSolution } from "./utils/solution.js";
     }
   });
 
-  submit.addEventListener("click", async () => {
+  const renderResults = async () => {
     // get the input value
     const value = encodeURI(input.value).replace(/\+/g, "%2B");
     console.log(value);
     const response = await post(value);
     console.log(response);
 
+    app.innerHTML = "";
     app.appendChild(renderSolution(response.solutions[0]));
+  };
+
+  submit.addEventListener("click", renderResults);
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      console.log("Enter");
+      renderResults();
+    }
   });
 })();
