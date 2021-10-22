@@ -1,2 +1,3 @@
-# fourier calculator
-buenas tardes
+# Calculator
+
+To run the flask server, just execute `python app.py`
