@@ -22,6 +22,7 @@ def fourier_series_symbo():
     #d_plus_T ="\\pi" 
     #T ="2\\pi"
     f = request.json["f"]
+    f = f.replace("+","%2b")
     d = request.json["d"]
     d_plus_T =request.json["d_plus_T"]
     T =request.json["T"]
@@ -30,14 +31,14 @@ def fourier_series_symbo():
 
     global_steps = []
 
-    a0_integral_expr,steps = evaluate("\\int{t}dt")
+    a0_integral_expr,steps = evaluate(f"\\int{{ {f} }}dt")
     a0_integral_expr = a0_integral_expr.replace("+C","")
     steps["comment"] ="Obtenemos la integral de a0"
     global_steps.append(steps)
 
     a = a0_integral_expr.replace("t",f"({d_plus_T})")
     b = a0_integral_expr.replace("t",f"({d})")
-    a0_dintegral_expr = f"{a} - {b}"
+    a0_dintegral_expr = f"{a} - ({b})"
     a0_dintegral,steps = evaluate(a0_dintegral_expr)
     steps["comment"] =f"Obtenemos la integral definida de a0 en el intervalo {d} -> {d_plus_T}"
     global_steps.append(steps)
@@ -46,15 +47,15 @@ def fourier_series_symbo():
     steps["comment"] =f"Obtenemos a0 final"
     global_steps.append(steps)
 
-    an_integral_expr,steps = evaluate(f"\\int{{{f} \\cdot cos(n \\cdot {omega} t) }}dt")
+    an_integral_expr,steps = evaluate(f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
     an_integral_expr = an_integral_expr.replace("+C","")
     steps["comment"] ="Obtenemos la integral de an"
     global_steps.append(steps)
 
     a = an_integral_expr.replace("t",f"({d_plus_T})")
     b = an_integral_expr.replace("t",f"({d})")
-    an_dintegral_expr = f"{a} - {b}"
-    an_dintegral,steps = evaluate(a0_dintegral_expr)
+    an_dintegral_expr = f"{a} - ({b})"
+    an_dintegral,steps = evaluate(an_dintegral_expr)
     steps["comment"] =f"Obtenemos la integral definida de an en el intervalo {d} -> {d_plus_T}"
     global_steps.append(steps)
 
@@ -62,7 +63,7 @@ def fourier_series_symbo():
     steps["comment"] ="Obtenemos an final"
     global_steps.append(steps)
 
-    bn_integral_expr,steps = evaluate(f"\\int{{{f} \\cdot sin(n \\cdot {omega} t) }}dt")
+    bn_integral_expr,steps = evaluate(f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
     bn_integral_expr = bn_integral_expr.replace("+C","")
     steps["comment"] ="Obtenemos la integral de bn"
     global_steps.append(steps)
