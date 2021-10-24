@@ -16,7 +16,7 @@ div.logo{
   text-align: center;
 }
 
-input[type=text] {
+.index-input {
   border: 2px solid rgb(178 146 146);
   border-radius: 4px;
   width: 500px;
@@ -52,4 +52,32 @@ ul{
 
 li{
   list-style-type: none;
+}
+
+li div:nth-child(2n+1){
+  background: rgb(212 212 212);
+  border-radius: 6px;
+  padding: 4px 5px 4px 10px;
+  font-size: 13px;
+}
+li div:nth-child(2n+2){
+  font-size: 16px;
+}
+
+.fourier{
+  width: 155px;
+  border: 2px solid rgb(178 146 146);
+  border-radius: 4px;
+  height: 25px;
+}
+
+.div-fourier{
+  display: flex;
+  max-width: 1344px;
+  justify-content: center;
+  gap: 10px;
+}
+
+label{
+  align-self: center;
 }
