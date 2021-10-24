@@ -1,13 +1,22 @@
-{% extends 'layout.html' %}
-{% block container %}
-<h3 id="output" style="display: flex;flex-direction: column;"></h3>
-        <div>
-          <label>function:</label><input type="text" name="value" id="input" />
-          <label>d:</label><input type="text" name="value" id="input" />
-          <label>d+T:</label><input type="text" name="value" id="input" />
-          <label>T:</label><input type="text" name="value" id="input" />
-          <button class="button" id="submit">Send</button>
-        </div>
+{% extends 'layout.html' %} {% block container %}
+<h3 id="output" style="display: flex; flex-direction: column"></h3>
+<div class="multi-input">
+  <div class="exp-input">
+    <label>function:</label><input type="text" name="value" id="function" />
+  </div>
+  <div class="exp-input">
+    <label>d:</label><input type="text" name="value" id="range1" />
+  </div>
+  <div class="exp-input">
+    <label>d+T:</label><input type="text" name="value" id="range2" />
+  </div>
+  <div class="exp-input">
+    <label>T:</label><input type="text" name="value" id="T" />
+  </div>
+  <div class="exp-input">
+    <button class="button" id="submit">Send</button>
+  </div>
+</div>
 <div id="app"></div>
 
 {% endblock %}
