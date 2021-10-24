@@ -18,6 +18,7 @@ def evaluate(expression):
 @app.route("/fourier-series",methods=["POST"])
 def fourier_series_symbo():
     #f = "t"
+    
     #d = "-\\pi"
     #d_plus_T ="\\pi" 
     #T ="2\\pi"
