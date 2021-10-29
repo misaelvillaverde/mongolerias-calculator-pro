@@ -5,25 +5,32 @@ body {
 li {
   padding: 0.8rem 0;
 }
-div.logo{
+div.logo {
   display: flex;
   justify-content: center;
   text-align: center;
   text-align: center;
   flex-direction: column;
 }
-.logo-h1{
+.logo-h1 {
   text-align: center;
 }
 
-input[type=text] {
+.multi-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.index-input {
   border: 2px solid rgb(178 146 146);
   border-radius: 4px;
   width: 500px;
   height: 25px;
 }
 
-.button{
+.button {
   height: 29px;
   width: 55px;
   font-family: monospace;
@@ -33,19 +40,57 @@ input[type=text] {
   border-radius: 4px;
   border: none;
 }
-
-#app{
+.main-content {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+#app {
   padding: 3px;
+  max-width: 90%;
+  overflow-x: scroll;
 }
 
-ul{
+ul {
   border-left: solid 2px red;
 }
 
-
-
-li{
+li {
   list-style-type: none;
+}
+
+div.comment {
+  font-size: 1rem;
+}
+
+li {
+  list-style-type: none;
+}
+
+li div:nth-child(2n + 1) {
+  background: rgba(212, 212, 212, 0.18);
+  border-radius: 6px;
+  padding: 4px 5px 4px 10px;
+  font-size: 13px;
+}
+li div:nth-child(2n + 2) {
+  font-size: 16px;
+}
+
+.fourier {
+  width: 155px;
+  border: 2px solid rgb(178 146 146);
+  border-radius: 4px;
+  height: 25px;
+}
+
+.div-fourier {
+  display: flex;
+  max-width: 1344px;
+  justify-content: center;
+  gap: 10px;
+}
+
+label {
+  align-self: center;
 }
