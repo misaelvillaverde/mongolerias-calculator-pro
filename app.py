@@ -9,8 +9,8 @@ app = Flask(__name__)
 def evaluate(expression):
     expression = expression.replace("+", "%2b")
     session = requests.session()
-    token = session.get(
-        "https://es.symbolab.com/solver/step-by-step/x%5E%7B2%7D?or=input").cookies.get_dict()["sy2.pub.token"]
+    token = session.get("https://es.symbolab.com/solver/step-by-step/x%5E%7B2%7D?or=input").cookies.get_dict()["sy2.pub.token"]
+    
     response = json.loads(session.get(f"https://es.symbolab.com/pub_api/steps?subscribed=true&origin=input&language=es&query={expression}", headers={
         "x-requested-with": "XMLHttpRequest",
         "authorization": f"Bearer {token}"
@@ -51,8 +51,7 @@ def fourier_series_symbo():
     steps["comment"] = f"Obtenemos $$a_0$$ final"
     global_steps.append(steps)
 
-    an_integral_expr, steps = evaluate(
-        f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
+    an_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
     an_integral_expr = an_integral_expr.replace("+C", "")
     steps["comment"] = "Obtenemos la integral de $$a_n$$"
     global_steps.append(steps)
@@ -68,8 +67,7 @@ def fourier_series_symbo():
     steps["comment"] = "Obtenemos $$a_n$$ final"
     global_steps.append(steps)
 
-    bn_integral_expr, steps = evaluate(
-        f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
+    bn_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
     bn_integral_expr = bn_integral_expr.replace("+C", "")
     steps["comment"] = "Obtenemos la integral de $$b_n$$"
     global_steps.append(steps)
