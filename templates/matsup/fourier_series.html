@@ -1,26 +1,30 @@
 {% extends 'layout.html' %} {% block container %}
 <h3 id="output" style="display: flex; flex-direction: column"></h3>
 <div class="multi-input">
-  <div class="exp-input">
-    <label>function:</label
-    ><input type="text" name="value" id="function" class="index-input" />
+  <div class="div-fourier">
+    <div>
+      <label>function:</label
+      ><input type="text" name="value" id="function" class="small-input" />
+    </div>
+    <div>
+      <label>d:</label
+      ><input type="text" name="value" id="range1" class="small-input" />
+    </div>
+    <div>
+      <label>d+T:</label
+      ><input type="text" name="value" id="range2" class="small-input" />
+    </div>
+    <button id="add_function"><i class="fas fa-plus"></i></button>
   </div>
-  <div class="exp-input">
-    <label>d:</label
-    ><input type="text" name="value" id="range1" class="index-input" />
-  </div>
-  <div class="exp-input">
-    <label>d+T:</label
-    ><input type="text" name="value" id="range2" class="index-input" />
-  </div>
-  <div class="exp-input">
+  <div>
     <label>T:</label
-    ><input type="text" name="value" id="T" class="index-input" />
+    ><input type="text" name="value" id="T" class="small-input" />
   </div>
-  <div class="exp-input">
+  <div>
     <button class="button" id="submit">Send</button>
   </div>
 </div>
+
 <div id="app"></div>
 
 {% endblock %}
