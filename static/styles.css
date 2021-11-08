@@ -94,3 +94,12 @@ li div:nth-child(2n + 2) {
 label {
   align-self: center;
 }
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
