@@ -310,6 +310,32 @@ def compleja():
     global_steps.append(compleja_response)
     return jsonify(global_steps)
 
+@app.route("fourier-transform", methods=['POST'])
+def fourier_trans():
+    T = request.json["T"]
+
+    omega, steps = evaluate(f"\\frac{{ 2\\pi }}{{ {T} }}")
+
+    global_steps = []
+    transform_terms = []
+
+    for function in request["functions"]:
+        f = function["f"]
+        d = function["d"]
+        d_plus_T = function["d_plus_T"]
+        integral_transform, steps = evaluate(f"\\int{{ {f}\\cdot e^{{-j \\cdot \\omega \\cdot t}} }}dt")
+        integral_transform = integral_transform.replace("C", "(0)")
+        a = integral_transform.replace("t", f"({d_plus_T})")
+        b = integral_transform.replace("t", f"({d})")
+        dintegral_transform = f"{a} - ({b})"
+        dintegral_transform_solution, steps = evaluate(dintegral_transform)
+        global_steps.append(steps)
+        transform_terms.append(dintegral_transform_solution)
+    transform_terms
+    transformada,steps = evaluate("{"+'+'.join(transform_terms)+"}")
+    steps['comment'] = 'Resultado de la tranformada'
+    global_steps.append(steps)
+    return jsonify(global_steps)
 
 
 @app.route("/symbo", methods=['POST'])
