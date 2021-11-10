@@ -20,22 +20,13 @@ def evaluate(expression):
 
 @app.route("/fourier-series", methods=["POST"])
 def fourier_series_symbo():
-    #f = "t"
-    
-    #d = "-\\pi"
-    #d_plus_T ="\\pi"
-    #T ="2\\pi"
-    f = request.json["f"]
-    f = f.replace("+", "%2b")
-    d = request.json["d"]
-    d_plus_T = request.json["d_plus_T"]
     T = request.json["T"]
 
     omega, steps = evaluate(f"\\frac{{ 2\\pi }}{{ {T} }}")
 
     global_steps = []
 
-    a0_integral_expr, steps = evaluate(f"\\int{{ {f} }}dt")
+    """a0_integral_expr, steps = evaluate(f"\\int{{ {f} }}dt")
     a0_integral_expr = a0_integral_expr.replace("+C", "")
     steps["comment"] = "Obtenemos la integral de $$a_0$$"
     global_steps.append(steps)
@@ -50,8 +41,33 @@ def fourier_series_symbo():
     a0, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot {a0_dintegral}")
     steps["comment"] = f"Obtenemos $$a_0$$ final"
     global_steps.append(steps)
+    """
+    a0_terms = []
+    for function in request["functions"]:
+        f = function["f"]
+        d = function["d"]
+        d_plus_T = function["d_plus_T"]
+        # OBTENER EXPRESION INTEGRAL 
+        integral__ =f"\\int{{ {f} }}dt"
+        a0_integral_expr, steps = evaluate(integral__)
+        a0_integral_expr = a0_integral_expr.replace("+C", "")
+        steps["comment"] = "Obtenemos la integral de $$a_0$$"
+        global_steps.append(steps)
 
-    an_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
+        # OBTENER INTEGRAL DEFINIDA DEL RANGO
+        a = a0_integral_expr.replace("t", f"({d_plus_T})")
+        b = a0_integral_expr.replace("t", f"({d})")
+        a0_dintegral_expr = f"{a} - ({b})"
+        a0_dintegral, steps = evaluate(a0_dintegral_expr)
+        steps["comment"] = f"Obtenemos la integral definida de $$a_0$$ en el intervalo $${d} \\rightarrow {d_plus_T}$$"
+        global_steps.append(steps)
+        a0_terms.append(a0_dintegral)
+    
+    a0, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot ({ '+'.join(a0_terms) })")
+    steps["comment"] = f"Obtenemos $$a_0$$ final"
+    global_steps.append(steps)
+
+    """an_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
     an_integral_expr = an_integral_expr.replace("+C", "")
     steps["comment"] = "Obtenemos la integral de $$a_n$$"
     global_steps.append(steps)
@@ -65,9 +81,36 @@ def fourier_series_symbo():
 
     an, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot {an_dintegral}")
     steps["comment"] = "Obtenemos $$a_n$$ final"
-    global_steps.append(steps)
+    global_steps.append(steps)"""
 
-    bn_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
+    an_terms = []
+    for function in request["functions"]:
+        f = function["f"]
+        d = function["d"]
+        d_plus_T = function["d_plus_T"]
+        integral__ = f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt"
+        # OBTENER EXPRESION INTEGRAL 
+        an_integral_expr, steps = evaluate(integral__)
+        an_integral_expr = an_integral_expr.replace("+C", "")
+        steps["comment"] = "Obtenemos la integral de $$a_n$$"
+        global_steps.append(steps)
+
+        # OBTENER INTEGRAL DEFINIDA DEL RANGO
+        a = an_integral_expr.replace("t", f"({d_plus_T})")
+        b = an_integral_expr.replace("t", f"({d})")
+        an_dintegral_expr = f"{a} - ({b})"
+        an_dintegral, steps = evaluate(an_dintegral_expr)
+        
+        steps["comment"] = f"Obtenemos la integral definida de $$a_n$$ en el intervalo $${d} \\rightarrow {d_plus_T}$$"
+        global_steps.append(steps)
+        an_terms.append(an_dintegral)
+
+    
+    an, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot ({ '+'.join(an_terms) })")
+    steps["comment"] = "Obtenemos $$a_n$$ final"
+    global_steps.append(steps)
+    
+    """bn_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
     bn_integral_expr = bn_integral_expr.replace("+C", "")
     steps["comment"] = "Obtenemos la integral de $$b_n$$"
     global_steps.append(steps)
@@ -81,6 +124,31 @@ def fourier_series_symbo():
 
     bn, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot {bn_dintegral}")
     steps["comment"] = "Obtenemos $$b_n$$ final"
+    global_steps.append(steps)"""
+
+    bn_terms = []
+    for function in request["functions"]:
+        f = function["f"]
+        d = function["d"]
+        d_plus_T = function["d_plus_T"]
+        integral__ = f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt"
+        # OBTENER EXPRESION INTEGRAL 
+        bn_integral_expr, steps = evaluate(integral__)
+        bn_integral_expr = bn_integral_expr.replace("+C", "")
+        steps["comment"] = "Obtenemos la integral de $$b_n$$"
+        global_steps.append(steps)
+
+        # OBTENER INTEGRAL DEFINIDA DEL RbnGO
+        a = bn_integral_expr.replace("t", f"({d_plus_T})")
+        b = bn_integral_expr.replace("t", f"({d})")
+        bn_dintegral_expr = f"{a} - ({b})"
+        bn_dintegral, steps = evaluate(bn_dintegral_expr)
+        
+        steps["comment"] = f"Obtenemos la integral definida de $$b_n$$ en el intervalo $${d} \\rightarrow {d_plus_T}$$"
+        global_steps.append(steps)
+        bn_terms.append(bn_dintegral)
+    bn, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot ({ '+'.join(bn_terms) })")
+    steps["comment"] = "Obtenemos $$a_n$$ final"
     global_steps.append(steps)
 
     termino1_expr = f"\\frac{{1}}{{2}}\cdot {a0}"
