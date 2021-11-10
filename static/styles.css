@@ -18,16 +18,19 @@ body {
 }
 
 h1 {
-  margin: 20px;
+  font-family: "DM Serif Display", sans-serif;
+  margin: 40px 0 10px 0;
 }
 
-h1 > a {
+h2 {
   font-family: "DM Serif Display", sans-serif;
-  color: #000;
+  margin: 20px;
+  font-size: 1.7rem;
 }
 
 a {
   text-decoration: none;
+  font-family: inherit;
   color: inherit;
 }
 
@@ -35,6 +38,14 @@ pre,
 input,
 label {
   font-family: "Fira Code", monospace;
+}
+
+pre {
+  margin: 20px;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 5px;
+  overflow-x: auto;
 }
 
 input {
@@ -171,7 +182,7 @@ button:active {
 }
 
 #output {
-  margin: 10px;
+  margin: 40px;
 }
 
 footer {

@@ -1,6 +1,6 @@
 export const ErrorResponse = (
   app,
-  error = "Como siempre error en el backend🥵"
+  error = "O tas improvisando paja🤔 o error en el backend🥵"
 ) => {
   const errorResponse = document.createElement("pre");
   errorResponse.innerHTML = error;

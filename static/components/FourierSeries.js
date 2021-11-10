@@ -34,6 +34,15 @@ export const FourierSeries = (app) => {
 
   const removeButton = (index, button) => {
     console.log(`eliminar ${index}`);
+    const funcs = document.querySelectorAll(".function");
+
+    funcs.forEach((func, i) => {
+      const inputs = func.querySelectorAll("input");
+      functions.functions[i].f = inputs[0].value;
+      functions.functions[i].d = inputs[1].value;
+      functions.functions[i].d_plus_T = inputs[2].value;
+    });
+
     button.removeEventListener(
       "click",
       functions.functions[index].removeHandler
@@ -113,7 +122,7 @@ export const FourierSeries = (app) => {
     try {
       let response;
       if (complexChecked) {
-        response = await post("/susana-mueve-haz-el-web-service", functions);
+        response = await post("/complex-fourier-series", functions);
       } else {
         response = await post("/fourier-series", functions);
       }
