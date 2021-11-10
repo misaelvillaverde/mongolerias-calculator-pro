@@ -1,19 +1,14 @@
-{% extends 'base.html' %}
-{% block title %}
-    <title>{{title}}</title>
-{% endblock %}
-
-{% block navbar %}
+{% extends 'base.html' %} {% block title %}
+<title>{{title}}</title>
+{% endblock %} {% block navbar %}
 <header>
-    <div class="logo">
-      <h1 class="logo-h1">MathCalculator</h1>
-    </div>
+  <div class="logo">
+    <h1 class="logo-h1"><a href="/">MathCalculator</a></h1>
+  </div>
 </header>
-{% endblock %}
-
-{% block content %}
-<div class="main-content">
-    {% block container %}
-    {% endblock %}
-</div>
+{% endblock %} {% block content %}
+<div class="main-content">{% block container %} {% endblock %}</div>
+<footer>
+  {% block footer %} {% endblock %}copyright &copy;Borokotroko, 2021
+</footer>
 {% endblock %}

@@ -1,5 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fira+Code:wght@500&family=Inter:wght@400;500;700;900&display=swap");
+
+:not(ul, li) {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 body {
-  font-family: monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+:not(span),
+body {
+  font-family: "Inter", sans-serif;
+}
+
+h1 {
+  margin: 20px;
+}
+
+h1 > a {
+  font-family: "DM Serif Display", sans-serif;
+  color: #000;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+pre,
+input,
+label {
+  font-family: "Fira Code", monospace;
+}
+
+input {
+  height: 30px;
+  border-radius: 6px;
 }
 
 li {
@@ -24,31 +64,27 @@ div.logo {
 }
 
 .index-input {
-  border: 2px solid rgb(178 146 146);
   border-radius: 4px;
   width: 500px;
-  height: 25px;
 }
 
-.button {
-  height: 29px;
-  width: 55px;
-  font-family: monospace;
+.send-button {
   background: red;
   color: white;
   font-weight: 700;
   border-radius: 4px;
-  border: none;
 }
+
 .main-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 #app {
   padding: 3px;
   max-width: 90%;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 ul {
@@ -79,9 +115,8 @@ li div:nth-child(2n + 2) {
 
 .small-input {
   width: 155px;
-  border: 2px solid rgb(178 146 146);
   border-radius: 4px;
-  height: 25px;
+  margin-right: 10px;
 }
 
 .div-fourier {
@@ -91,15 +126,61 @@ li div:nth-child(2n + 2) {
   gap: 10px;
 }
 
-label {
-  align-self: center;
-}
-
 .flex {
   display: flex;
+  align-items: center;
+}
+
+.gap {
+  gap: 0.5rem;
 }
 
 .flex-column {
   display: flex;
   flex-direction: column;
+}
+
+.function {
+  margin-bottom: 10px;
+}
+
+#add_function {
+  margin-bottom: 10px;
+}
+
+button {
+  border: 2px solid #000;
+  background: lightsalmon;
+  transition: transform 0.1s, box-shadow 0.1s;
+  cursor: pointer;
+  padding: 5px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px #000;
+  border: 2px solid #000;
+  color: #000;
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px #000, inset 0px 0px #000;
+  border: 2px solid #000;
+  color: #000;
+}
+
+#output {
+  margin: 10px;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 10px;
+  background: rgba(255, 182, 193, 0.472);
+  width: 100%;
+  margin-top: auto;
 }

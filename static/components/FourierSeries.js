@@ -6,6 +6,9 @@ export const FourierSeries = (app) => {
   const submitButton = document.querySelector("#submit");
   const addFuncButton = document.querySelector("#add_function");
   const functionsDiv = document.querySelector("#functions");
+  const periodInput = document.querySelector("#T");
+  const complexInput = document.querySelector("#complex");
+  periodInput.setAttribute("value", "2\\pi");
 
   const functions = {
     functions: [
@@ -18,8 +21,10 @@ export const FourierSeries = (app) => {
         },
       },
     ],
-    T: "2\\pi",
+    T: periodInput.value,
   };
+
+  let complexChecked = false;
 
   const encodeFunctions = (func) => {
     func.functions.forEach((f, i) => {
@@ -106,11 +111,16 @@ export const FourierSeries = (app) => {
     app.innerHTML = "";
 
     try {
-      const response = await post("/fourier-series", functions);
+      let response;
+      if (complexChecked) {
+        response = await post("/susana-mueve-haz-el-web-service", functions);
+      } else {
+        response = await post("/fourier-series", functions);
+      }
       console.log(response);
       app.appendChild(renderSolution(response));
-    } catch (error) {
-      ErrorResponse(app, error);
+    } catch {
+      ErrorResponse(app);
     }
   };
 
@@ -135,6 +145,15 @@ export const FourierSeries = (app) => {
     renderFunctions();
   };
 
+  const toggleComplex = () => {
+    complexChecked = !complexChecked;
+    console.log(complexChecked);
+  };
+
+  complexInput.addEventListener("click", toggleComplex);
+  periodInput.addEventListener("change", () => {
+    functions.T = periodInput.value;
+  });
   submitButton.addEventListener("click", renderResults);
   addFuncButton.addEventListener("click", addButton);
 };

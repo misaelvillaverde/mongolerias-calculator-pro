@@ -38,8 +38,8 @@ export const GeneralCalculator = (app) => {
       const response = await post("/symbo", bodyExpression);
       console.log(response);
       app.appendChild(renderSolution(response.solutions[0]));
-    } catch (error) {
-      ErrorResponse(app, error);
+    } catch {
+      ErrorResponse(app);
     }
   };
 
