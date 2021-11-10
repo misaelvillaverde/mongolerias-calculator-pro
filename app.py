@@ -4,18 +4,11 @@ from flask import jsonify
 import requests
 import json
 app = Flask(__name__)
-
-
-def evaluate(expression):
-    expression = expression.replace("+", "%2b")
-    session = requests.session()
-    token = session.get("https://es.symbolab.com/solver/step-by-step/x%5E%7B2%7D?or=input").cookies.get_dict()["sy2.pub.token"]
-    
-    response = json.loads(session.get(f"https://es.symbolab.com/pub_api/steps?subscribed=true&origin=input&language=es&query={expression}", headers={
-        "x-requested-with": "XMLHttpRequest",
-        "authorization": f"Bearer {token}"
-    }).content)
-    return (response["solutions"][len(response["solutions"])-1]["entire_result"].replace("=", ""), response["solutions"][0])
+from utiles import NoImpNoPar
+from utiles import NoLess
+from utiles import evaluate
+from utiles import IntegralTrigSC
+from utiles import QuitarCeros
 
 
 @app.route("/fourier-series", methods=["POST"])
@@ -174,6 +167,149 @@ def fourier_series_symbo():
     global_steps.append(fourier_response)
 
     return jsonify(global_steps)
+
+@app.route("complex-fourier-serie", methods=['POST'])
+def compleja():
+    global_steps = []
+
+    #si converge
+    converge_terms = []
+    functions = NoLess(request)
+    for function in functions:
+        f = function["f"]
+        ran1 = function["r1"]
+        ran2 = function["r2"]
+        integral_ = "\\int{{"+f+"}}dt"
+        converge_expr,steps = evaluate(integral_)
+        converge_expr = converge_expr.replace("+C","")
+        converge_expr = converge_expr.replace("C","0")
+        steps["comment"] = "Obtenemos la integral para cada función"
+        global_steps.append(steps)
+
+        #el rango
+        a = converge_expr.replace("t",f"("+ran2+")")
+        b = converge_expr.replace("t",f"("+ran1+")")
+        converge_definidaexpr = f"("+a+")-("+b+")"
+        converge_definida,steps = evaluate(converge_definidaexpr)
+        steps["comment"] = "Obtenemos la integral definida para cada función"
+        global_steps.append(steps)
+        converge_terms.append(converge_definida)
+
+    if request["tipo"] == "par":
+        conv,steps = evaluate("2\cdot({"+'+'.join(converge_terms)+"})")
+        steps["comment"] = "Sumamos los terminos obtenidos"
+    else:
+        conv,steps = evaluate("\cdot({"+'+'.join(converge_terms)+"})")
+        steps["comment"] = "Sumamos los terminos obtenidos"
+        
+    match = re.search("(\\\\frac\{(\d*)\}\{(\d*)})", conv) or re.search("^-?\d+(\.\d+)?$", conv)
+    if match: 
+        print("si converge")
+        steps["comment"] = "La función si converge"
+        global_steps.append(steps)
+    else:
+        steps["comment"] = "La función NO converge"
+        global_steps.append(steps)
+        return jsonify(global_steps)
+        #response
+
+    #Forma compleja de la integral de FOURIER
+    compleja_terms = []
+    steps["comment"] = "Integral compleja de fourier de $f(t)$"
+    steps["comment"] = "$\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}[\\int_{-\\infty}^{+\\infty}{f(\\tau)}e^{-jw\\tau}{d\\tau}]dw$"
+    for function in request["functions"]:
+        f= function["f"]
+        ran1 = function["r1"]
+        ran2 = function["r2"]
+        #OBTENER LA EXPRESION INTEGRAL CON TAO
+        integral2__ = f"\\int(({f})\\cdot e^{{-jwt}}{{dt}})"
+        compleja2,steps = evaluate(integral2__)
+        compleja2= compleja2.replace("+C","")
+        compleja2 = compleja2.replace("C","0")
+        steps["comment"] = "Obtenemos la primera integral para la forma compleja"
+
+        #Obtener la expresión definida de la integral TAO
+        a = compleja2.replace("t",f"("+ran2+")")
+        b = compleja2.replace("t",f"("+ran1+")")
+
+        compleja2_defexpr = f"("+a+")-("+b+")"
+        compleja_def,steps = evaluate(compleja2_defexpr)
+        steps["comment"] = "Obtenemos la integral definida para la forma compleja"
+        global_steps.append(steps)
+        compleja_terms.append(compleja_def)
+
+    compleja_terms = QuitarCeros(compleja_terms)
+    compleja,steps = evaluate("{"+'+'.join(compleja_terms)+"}")
+    steps["comment"] = "Suma de los terminos finales"
+    compleja_final= "\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}"+compleja+"dw"
+    global_steps.append(steps)
+    
+    compleja01_response = {
+            "comment": "Representación de la integral compleja de fourier de la función f(t)",
+            "entire_result": compleja_final,
+        }
+    global_steps.append(compleja01_response)
+
+    #FORMA TRIGONOMETRICA DE LA INTEGRAL DE FOURIER
+    intgr_trig = []
+    if request["tipo"] == "par":
+        for function  in request["functions"]:
+            f= function["f"]
+            ran1 = function["r1"]
+            ran2 = function["r2"]
+            c = 'cos'
+            stp, int_f = IntegralTrigSC(c,ran1,ran2)
+            global_steps.append(stp)
+            intgr_trig.append(int_f)
+    elif request["tipo"] =="impar":
+        for function  in request["functions"]:
+            f= function["f"]
+            ran1 = function["r1"]
+            ran2 = function["r2"]
+            s = 'sin'
+            stp, int_f = IntegralTrigSC(s,ran1,ran2)
+            global_steps.append(stp)
+            intgr_trig.append(int_f)
+    else: 
+        for function in request["functions"]:
+            f= function["f"]
+            ran1 = function["r1"]
+            ran2 = function["r2"]
+
+            c = "cos"
+            stpc, int_fc = NoImpNoPar(c,f,ran1,ran2)
+            global_steps.append(stpc)
+            intgr_trig.append(int_fc)
+
+            s = "sin"
+            stps, int_fs = NoImpNoPar(s,f,ran1,ran2)
+            global_steps.append(stps)
+            intgr_trig.append(int_fs) 
+    
+    if request["tipo"] == "par":
+        forma_trig,steps = evaluate("{"+'+'.join(intgr_trig)+"}")
+        formatrig_final= f"\\frac{{ 2 }}{{\\pi}}\\int_{0}^{{+\\infty}}{{{forma_trig}}}{{\\cos(tw)}}dw"
+        steps["comment"] = "Suma de integrales"
+        global_steps.append(steps)
+
+    elif request["tipo"] == "impar":
+        forma_trig,steps = evaluate("{"+'+'.join(intgr_trig)+"}")
+        formatrig_final= f"\\frac{{ 2 }}{{\\pi}}\\int_{0}^{{+\\infty}}{{{forma_trig}}}{{\\sin(tw)}}dw"
+        steps["comment"] = "Forma trigonometrica de la integral de Fourier"
+        global_steps.append(steps)
+
+    else:
+        intgr_trig = QuitarCeros(intgr_trig)
+        formatrig_final= f"\\frac{{ 2 }}{{\\pi}}[\\int_{0}^{{+\\infty}}{{{intgr_trig[0]}}}{{\\cos(tw)}}dw+\\int_{0}^{{+\\infty}}{{{intgr_trig[1]}}}{{\\sin(tw)}}dw]"
+        
+    compleja_response = {
+            "comment": "Forma trigonometrica de la integral de Fourier",
+            "entire_result": formatrig_final,
+        }
+
+    global_steps.append(compleja_response)
+    return jsonify(global_steps)
+
 
 
 @app.route("/symbo", methods=['POST'])
