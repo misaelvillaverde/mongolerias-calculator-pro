@@ -9,6 +9,8 @@ from utiles import NoLess
 from utiles import evaluate
 from utiles import IntegralTrigSC
 from utiles import QuitarCeros
+
+import re
 """import mimetypes
 mimetypes.add_type('application/javascript', '.js')"""
 
@@ -142,7 +144,7 @@ def fourier_series_symbo():
 
     return jsonify(global_steps)
 
-@app.route("/complex-fourier-serie", methods=['POST'])
+@app.route("/complex-fourier-series", methods=['POST'])
 def compleja():
     global_steps = []
 
@@ -151,8 +153,8 @@ def compleja():
     functions = NoLess(request.json)
     for function in functions:
         f = function["f"]
-        ran1 = function["r1"]
-        ran2 = function["r2"]
+        ran1 = function["d"]
+        ran2 = function["d_plus_T"]
         integral_ = "\\int{{"+f+"}}dt"
         converge_expr,steps = evaluate(integral_)
         converge_expr = converge_expr.replace("+C","")
@@ -169,7 +171,7 @@ def compleja():
         global_steps.append(steps)
         converge_terms.append(converge_definida)
 
-    if request["tipo"] == "par":
+    if request.json["tipo"] == "par":
         conv,steps = evaluate("2\cdot({"+'+'.join(converge_terms)+"})")
         steps["comment"] = "Sumamos los terminos obtenidos"
     else:
@@ -191,10 +193,10 @@ def compleja():
     compleja_terms = []
     steps["ctitle"] = "Integral compleja de fourier de $f(t)$"
     steps["comment"] = "$\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}[\\int_{-\\infty}^{+\\infty}{f(\\tau)}e^{-jw\\tau}{d\\tau}]dw$"
-    for function in request["functions"]:
+    for function in request.json["functions"]:
         f= function["f"]
-        ran1 = function["r1"]
-        ran2 = function["r2"]
+        ran1 = function["d"]
+        ran2 = function["d_plus_T"]
         #OBTENER LA EXPRESION INTEGRAL CON TAO
         integral2__ = f"\\int(({f})\\cdot e^{{-jwt}}{{dt}})"
         compleja2,steps = evaluate(integral2__)
@@ -227,29 +229,29 @@ def compleja():
     #FORMA TRIGONOMETRICA DE LA INTEGRAL DE FOURIER
     intgr_trig = []
     steps["ctitle"] = "Obtenemos la forma trigonometrica"
-    if request["tipo"] == "par":
-        for function  in request["functions"]:
+    if request.json["tipo"] == "par":
+        for function  in request.json["functions"]:
             f= function["f"]
-            ran1 = function["r1"]
-            ran2 = function["r2"]
+            ran1 = function["d"]
+            ran2 = function["d_plus_T"]
             c = 'cos'
             stp, int_f = IntegralTrigSC(c,ran1,ran2)
             global_steps.append(stp)
             intgr_trig.append(int_f)
-    elif request["tipo"] =="impar":
-        for function  in request["functions"]:
+    elif request.json["tipo"] =="impar":
+        for function  in request.json["functions"]:
             f= function["f"]
-            ran1 = function["r1"]
-            ran2 = function["r2"]
+            ran1 = function["d"]
+            ran2 = function["d_plus_T"]
             s = 'sin'
             stp, int_f = IntegralTrigSC(s,ran1,ran2)
             global_steps.append(stp)
             intgr_trig.append(int_f)
     else: 
-        for function in request["functions"]:
+        for function in request.json["functions"]:
             f= function["f"]
-            ran1 = function["r1"]
-            ran2 = function["r2"]
+            ran1 = function["d"]
+            ran2 = function["d_plus_T"]
 
             c = "cos"
             stpc, int_fc = NoImpNoPar(c,f,ran1,ran2)
@@ -261,13 +263,13 @@ def compleja():
             global_steps.append(stps)
             intgr_trig.append(int_fs) 
     
-    if request["tipo"] == "par":
+    if request.json["tipo"] == "par":
         forma_trig,steps = evaluate("{"+'+'.join(intgr_trig)+"}")
         formatrig_final= f"\\frac{{ 2 }}{{\\pi}}\\int_{0}^{{+\\infty}}{{{forma_trig}}}{{\\cos(tw)}}dw"
         steps["comment"] = "Suma de integrales"
         global_steps.append(steps)
 
-    elif request["tipo"] == "impar":
+    elif request.json["tipo"] == "impar":
         forma_trig,steps = evaluate("{"+'+'.join(intgr_trig)+"}")
         formatrig_final= f"\\frac{{ 2 }}{{\\pi}}\\int_{0}^{{+\\infty}}{{{forma_trig}}}{{\\sin(tw)}}dw"
         steps["comment"] = "Forma trigonometrica de la integral de Fourier"
@@ -294,7 +296,7 @@ def fourier_trans():
     global_steps = []
     transform_terms = []
 
-    for function in request["functions"]:
+    for function in request.json["functions"]:
         f = function["f"]
         d = function["d"]
         d_plus_T = function["d_plus_T"]
