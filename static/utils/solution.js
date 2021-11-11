@@ -44,7 +44,7 @@ const traverse = (node, unorderedList) => {
     try {
       katex.render(node.entire_result, katexResult);
     } catch (e) {
-      katexTitle.innerHTML = `Error 😈 ${e}`;
+      katexResult.innerHTML = `Error 😈 ${e}`;
     }
     li.appendChild(katexResult);
   }

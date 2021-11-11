@@ -61,7 +61,7 @@ export const FourierSeries = (app) => {
     });
 
     console.log("graph data", graphdata);
-    Graph(1200, 500, graphdata);
+    Graph(800, 500, graphdata);
   };
   updateGraph();
 
@@ -184,14 +184,14 @@ export const FourierSeries = (app) => {
         response = await post("/fourier-series", encodedFunctions);
       }
       console.log(response);
-    } catch {
-      ErrorResponse(app);
+    } catch (err) {
+      ErrorResponse(app, "Back error 🥵:" + err);
     }
 
     try {
       app.appendChild(renderSolution(response));
     } catch (err) {
-      ErrorResponse(app, err);
+      ErrorResponse(app, "Front error 👽:" + err);
     }
   };
 

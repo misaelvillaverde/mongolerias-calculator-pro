@@ -7,8 +7,8 @@ export const Graph = (width, height, data) => {
     target: "#graph",
     width,
     height,
-    yAxis: { domain: [-1, 20] },
-    xAxis: { domain: [-1, 10] },
+    yAxis: { domain: [-20, 20] },
+    xAxis: { domain: [-20, 20] },
     grid: true,
     data,
   });
