@@ -365,5 +365,8 @@ def hello():
 def fourier_series():
     return render_template('/matsup/fourier_series.html')
 
+@app.route('/fourier-transform')
+def fourier_transform():
+    return render_template('/matsup/fourier_transform.html')
 
 app.run(debug=True)
