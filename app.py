@@ -9,7 +9,8 @@ from utiles import NoLess
 from utiles import evaluate
 from utiles import IntegralTrigSC
 from utiles import QuitarCeros
-
+"""import mimetypes
+mimetypes.add_type('application/javascript', '.js')"""
 
 @app.route("/fourier-series", methods=["POST"])
 def fourier_series_symbo():
@@ -36,7 +37,7 @@ def fourier_series_symbo():
     global_steps.append(steps)
     """
     a0_terms = []
-    for function in request["functions"]:
+    for function in request.json["functions"]:
         f = function["f"]
         d = function["d"]
         d_plus_T = function["d_plus_T"]
@@ -60,28 +61,15 @@ def fourier_series_symbo():
     steps["comment"] = f"Obtenemos $$a_0$$ final"
     global_steps.append(steps)
 
-    """an_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt")
-    an_integral_expr = an_integral_expr.replace("+C", "")
-    steps["comment"] = "Obtenemos la integral de $$a_n$$"
-    global_steps.append(steps)
-
-    a = an_integral_expr.replace("t", f"({d_plus_T})")
-    b = an_integral_expr.replace("t", f"({d})")
-    an_dintegral_expr = f"{a} - ({b})"
-    an_dintegral, steps = evaluate(an_dintegral_expr)
-    steps["comment"] = f"Obtenemos la integral definida de $$a_n$$ en el intervalo $${d} \\rightarrow {d_plus_T}$$"
-    global_steps.append(steps)
-
-    an, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot {an_dintegral}")
-    steps["comment"] = "Obtenemos $$a_n$$ final"
-    global_steps.append(steps)"""
+    
 
     an_terms = []
-    for function in request["functions"]:
+    for function in request.json["functions"]:
         f = function["f"]
         d = function["d"]
         d_plus_T = function["d_plus_T"]
         integral__ = f"\\int{{({f}) \\cdot cos(n \\cdot {omega} t) }}dt"
+        #import pdb; pdb.set_trace()
         # OBTENER EXPRESION INTEGRAL 
         an_integral_expr, steps = evaluate(integral__)
         an_integral_expr = an_integral_expr.replace("+C", "")
@@ -103,28 +91,14 @@ def fourier_series_symbo():
     steps["comment"] = "Obtenemos $$a_n$$ final"
     global_steps.append(steps)
     
-    """bn_integral_expr, steps = evaluate(f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt")
-    bn_integral_expr = bn_integral_expr.replace("+C", "")
-    steps["comment"] = "Obtenemos la integral de $$b_n$$"
-    global_steps.append(steps)
-
-    a = bn_integral_expr.replace("t", f"({d_plus_T})")
-    b = bn_integral_expr.replace("t", f"({d})")
-    bn_dintegral_expr = f"{a} - ({b})"
-    bn_dintegral, steps = evaluate(bn_dintegral_expr)
-    steps["comment"] = f"Obtenemos la integral definida de $$b_n$$ en el intervalo $${d} \\rightarrow {d_plus_T}$$"
-    global_steps.append(steps)
-
-    bn, steps = evaluate(f"\\frac{{ 2 }}{{ {T} }} \cdot {bn_dintegral}")
-    steps["comment"] = "Obtenemos $$b_n$$ final"
-    global_steps.append(steps)"""
+   
 
     bn_terms = []
-    for function in request["functions"]:
+    for function in request.json["functions"]:
         f = function["f"]
         d = function["d"]
         d_plus_T = function["d_plus_T"]
-        integral__ = f"\\int{{({f}) \\cdot sin(n \\cdot {omega} t) }}dt"
+        integral__ = f"\\int{{({f}) \\cdot sin(n {omega} t) }}dt"
         # OBTENER EXPRESION INTEGRAL 
         bn_integral_expr, steps = evaluate(integral__)
         bn_integral_expr = bn_integral_expr.replace("+C", "")
@@ -174,7 +148,7 @@ def compleja():
 
     #si converge
     converge_terms = []
-    functions = NoLess(request)
+    functions = NoLess(request.json)
     for function in functions:
         f = function["f"]
         ran1 = function["r1"]
