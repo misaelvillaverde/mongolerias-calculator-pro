@@ -45,7 +45,7 @@ def fourier_series_symbo():
         integral__ =f"\\int{{ {f} }}dt"
         a0_integral_expr, steps = evaluate(integral__)
         a0_integral_expr = a0_integral_expr.replace("+C", "")
-        steps["comment"] = "Obtenemos la integral de $$a_0$$"
+        steps["title"] = "Obtenemos la integral de $$a_0$$"
         global_steps.append(steps)
 
         # OBTENER INTEGRAL DEFINIDA DEL RANGO
@@ -73,7 +73,7 @@ def fourier_series_symbo():
         # OBTENER EXPRESION INTEGRAL 
         an_integral_expr, steps = evaluate(integral__)
         an_integral_expr = an_integral_expr.replace("+C", "")
-        steps["comment"] = "Obtenemos la integral de $$a_n$$"
+        steps["title"] = "Obtenemos la integral de $$a_n$$"
         global_steps.append(steps)
 
         # OBTENER INTEGRAL DEFINIDA DEL RANGO
@@ -102,7 +102,7 @@ def fourier_series_symbo():
         # OBTENER EXPRESION INTEGRAL 
         bn_integral_expr, steps = evaluate(integral__)
         bn_integral_expr = bn_integral_expr.replace("+C", "")
-        steps["comment"] = "Obtenemos la integral de $$b_n$$"
+        steps["title"] = "Obtenemos la integral de $$b_n$$"
         global_steps.append(steps)
 
         # OBTENER INTEGRAL DEFINIDA DEL RbnGO
@@ -157,7 +157,7 @@ def compleja():
         converge_expr,steps = evaluate(integral_)
         converge_expr = converge_expr.replace("+C","")
         converge_expr = converge_expr.replace("C","0")
-        steps["comment"] = "Obtenemos la integral para cada función"
+        steps["title"] = "Vemos si la función converge"
         global_steps.append(steps)
 
         #el rango
@@ -189,7 +189,7 @@ def compleja():
 
     #Forma compleja de la integral de FOURIER
     compleja_terms = []
-    steps["comment"] = "Integral compleja de fourier de $f(t)$"
+    steps["title"] = "Integral compleja de fourier de $f(t)$"
     steps["comment"] = "$\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}[\\int_{-\\infty}^{+\\infty}{f(\\tau)}e^{-jw\\tau}{d\\tau}]dw$"
     for function in request["functions"]:
         f= function["f"]
@@ -226,6 +226,7 @@ def compleja():
 
     #FORMA TRIGONOMETRICA DE LA INTEGRAL DE FOURIER
     intgr_trig = []
+    steps["title"] = "Obtenemos la forma trigonometrica"
     if request["tipo"] == "par":
         for function  in request["functions"]:
             f= function["f"]
@@ -299,6 +300,7 @@ def fourier_trans():
         d_plus_T = function["d_plus_T"]
         integral_transform, steps = evaluate(f"\\int{{ {f}\\cdot e^{{-j \\cdot \\omega \\cdot t}} }}dt")
         integral_transform = integral_transform.replace("C", "(0)")
+        steps['title'] = 'Obtenemos la tranformada'
         a = integral_transform.replace("t", f"({d_plus_T})")
         b = integral_transform.replace("t", f"({d})")
         dintegral_transform = f"{a} - ({b})"
