@@ -1,6 +1,9 @@
 import { post } from "../utils/requests.js";
 import { renderSolution } from "../utils/solution.js";
 import { ErrorResponse } from "./ErrorResponse.js";
+import { Graph } from "./Graph.js";
+import { parseISymbols, evalFSymbols } from "../utils/algorithms.js";
+import katex from "https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.mjs";
 
 export const FourierSeries = (app) => {
   const submitButton = document.querySelector("#submit");
@@ -8,6 +11,7 @@ export const FourierSeries = (app) => {
   const functionsDiv = document.querySelector("#functions");
   const periodInput = document.querySelector("#T");
   const complexInput = document.querySelector("#complex");
+  const latexOutput = document.querySelector("#output");
   periodInput.setAttribute("value", "2\\pi");
 
   const functions = {
@@ -15,7 +19,7 @@ export const FourierSeries = (app) => {
       {
         f: "t",
         d: "0",
-        d_plus_T: "2\\pi",
+        d_plus_T: "2*\\pi",
         removeHandler: (e) => {
           removeButton(e.target.parentElement.dataset.index, e.target);
         },
@@ -27,13 +31,54 @@ export const FourierSeries = (app) => {
   let complexChecked = false;
 
   const encodeFunctions = (func) => {
-    func.functions.forEach((f, i) => {
+    // copy the functions object into new object
+    const encodeResult = JSON.parse(JSON.stringify(func));
+    encodeResult.functions.forEach((f, i) => {
       f.f = encodeURI(f.f).replace(/\+/g, "%2B");
+      f.d = encodeURI(f.d).replace(/\+/g, "%2B");
+      f.d_plus_T = encodeURI(f.d_plus_T).replace(/\+/g, "%2B");
     });
+    return encodeResult;
   };
 
-  const removeButton = (index, button) => {
-    console.log(`eliminar ${index}`);
+  const updateGraph = () => {
+    const graphdata = [];
+    functions.functions.forEach((f, i) => {
+      let fun, d, d_plus_T;
+
+      // parse string to int and \\pi to Math.PI
+      fun = parseISymbols(f.f);
+      d = evalFSymbols(f.d);
+      d_plus_T = evalFSymbols(f.d_plus_T);
+
+      const func = {
+        fn: fun,
+        range: [d, d_plus_T],
+      };
+      graphdata.push(func);
+    });
+
+    console.log("graph data", graphdata);
+    Graph(1200, 500, graphdata);
+  };
+  updateGraph();
+
+  const renderLatex = () => {
+    let cases = "f(t) = \\begin{cases}";
+    functions.functions.forEach((f, i) => {
+      if (i < functions.functions.length - 1) {
+        cases += `${f.f} &\\text{if } ${f.d} < t < ${f.d_plus_T} \\\\`;
+      } else {
+        cases += `${f.f} &\\text{if } ${f.d} < t < ${f.d_plus_T}`;
+      }
+    });
+    cases += "\\end{cases}";
+    console.log("latex: ", cases);
+    katex.render(cases, latexOutput);
+  };
+  renderLatex();
+
+  const updateFunctions = () => {
     const funcs = document.querySelectorAll(".function");
 
     funcs.forEach((func, i) => {
@@ -43,19 +88,24 @@ export const FourierSeries = (app) => {
       functions.functions[i].d_plus_T = inputs[2].value;
     });
 
+    console.log("updated:", functions);
+
+    updateGraph();
+    renderLatex();
+  };
+
+  const removeButton = (index, button) => {
     button.removeEventListener(
       "click",
       functions.functions[index].removeHandler
     );
     functions.functions.splice(index, 1);
+    updateGraph();
+    renderLatex();
     renderFunctions();
   };
 
   const renderFunctions = () => {
-    console.log(functions);
-    encodeFunctions(functions);
-    console.log(functions);
-
     functionsDiv.innerHTML = "";
     functions.functions.forEach((function_, i) => {
       const functionDiv = document.createElement("div");
@@ -106,6 +156,10 @@ export const FourierSeries = (app) => {
 
       rButton.addEventListener("click", function_.removeHandler);
 
+      fDiv.addEventListener("input", updateFunctions);
+      dDiv.addEventListener("input", updateFunctions);
+      d_plus_TDiv.addEventListener("input", updateFunctions);
+
       functionDiv.appendChild(rButton);
 
       functionsDiv.appendChild(functionDiv);
@@ -115,16 +169,17 @@ export const FourierSeries = (app) => {
   renderFunctions();
 
   const renderResults = async () => {
-    console.log(functions);
+    const encodedFunctions = encodeFunctions(functions);
+    console.log("encoded functions: ", encodedFunctions);
 
     app.innerHTML = "";
 
     try {
       let response;
       if (complexChecked) {
-        response = await post("/complex-fourier-series", functions);
+        response = await post("/complex-fourier-series", encodedFunctions);
       } else {
-        response = await post("/fourier-series", functions);
+        response = await post("/fourier-series", encodedFunctions);
       }
       console.log(response);
       app.appendChild(renderSolution(response));
@@ -134,33 +189,25 @@ export const FourierSeries = (app) => {
   };
 
   const addButton = () => {
-    const funcs = document.querySelectorAll(".function");
-
-    funcs.forEach((func, i) => {
-      const inputs = func.querySelectorAll("input");
-      functions.functions[i].f = inputs[0].value;
-      functions.functions[i].d = inputs[1].value;
-      functions.functions[i].d_plus_T = inputs[2].value;
-    });
-
+    updateFunctions();
     functions.functions.push({
       f: "t",
       d: "0",
-      d_plus_T: "2\\pi",
+      d_plus_T: "2*\\pi",
       removeHandler: (e) => {
         removeButton(e.target.parentElement.dataset.index, e.target);
       },
     });
     renderFunctions();
+    renderLatex();
   };
 
   const toggleComplex = () => {
     complexChecked = !complexChecked;
-    console.log(complexChecked);
   };
 
   complexInput.addEventListener("click", toggleComplex);
-  periodInput.addEventListener("change", () => {
+  periodInput.addEventListener("input", () => {
     functions.T = periodInput.value;
   });
   submitButton.addEventListener("click", renderResults);
