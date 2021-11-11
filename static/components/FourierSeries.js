@@ -12,6 +12,7 @@ export const FourierSeries = (app) => {
   const periodInput = document.querySelector("#T");
   const complexInput = document.querySelector("#complex");
   const latexOutput = document.querySelector("#output");
+  const parityDiv = document.querySelector("#parity");
   periodInput.setAttribute("value", "2\\pi");
 
   const functions = {
@@ -25,6 +26,7 @@ export const FourierSeries = (app) => {
         },
       },
     ],
+    tipo: "",
     T: periodInput.value,
   };
 
@@ -204,6 +206,50 @@ export const FourierSeries = (app) => {
 
   const toggleComplex = () => {
     complexChecked = !complexChecked;
+    parityDiv.innerHTML = "";
+    functions.tipo = "";
+    if (complexChecked) {
+      const evenDiv = document.createElement("div");
+      evenDiv.classList.add("flex");
+      evenDiv.classList.add("gap");
+
+      const evenLabel = document.createElement("label");
+      evenLabel.innerHTML = "Par";
+
+      const evenInput = document.createElement("input");
+      evenInput.setAttribute("type", "radio");
+      evenInput.setAttribute("name", "parity");
+
+      evenDiv.appendChild(evenLabel);
+      evenDiv.appendChild(evenInput);
+
+      const oddDiv = document.createElement("div");
+      oddDiv.classList.add("flex");
+      oddDiv.classList.add("gap");
+
+      const oddLabel = document.createElement("label");
+      oddLabel.innerHTML = "Impar";
+
+      const oddInput = document.createElement("input");
+      oddInput.setAttribute("type", "radio");
+      oddInput.setAttribute("name", "parity");
+
+      oddDiv.appendChild(oddLabel);
+      oddDiv.appendChild(oddInput);
+
+      evenInput.addEventListener("change", () => {
+        functions.tipo = "par";
+        console.log("par");
+      });
+
+      oddInput.addEventListener("change", () => {
+        functions.tipo = "impar";
+        console.log("impar");
+      });
+
+      parityDiv.appendChild(evenDiv);
+      parityDiv.appendChild(oddDiv);
+    }
   };
 
   complexInput.addEventListener("click", toggleComplex);
