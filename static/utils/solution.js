@@ -7,6 +7,14 @@ let count = 0;
 // traverse n-ary tree of step nodes in pre-order fashion
 const traverse = (node, unorderedList) => {
   const li = document.createElement("li");
+  // title
+  if (node.title != null) {
+    const title = document.createElement("div");
+    title.classList.add("line_title");
+    title.innerText = decodeURI(node.title);
+    li.appendChild(title);
+  }
+
   // comment
   if (node.comment != null) {
     const comment = document.createElement("div");
@@ -18,6 +26,7 @@ const traverse = (node, unorderedList) => {
   // katex title
   if (node.title?.text?.createdText != null) {
     const katexTitle = document.createElement("div");
+    katexTitle.classList.add("katex_title");
     katex.render(
       node.title.text.createdText.replace(/\s/g, "\\enspace "),
       katexTitle
