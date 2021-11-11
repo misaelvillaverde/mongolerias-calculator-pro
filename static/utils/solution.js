@@ -27,17 +27,25 @@ const traverse = (node, unorderedList) => {
   if (node.title?.text?.createdText != null) {
     const katexTitle = document.createElement("div");
     katexTitle.classList.add("katex_title");
-    katex.render(
-      node.title.text.createdText.replace(/\s/g, "\\enspace "),
-      katexTitle
-    );
+    try {
+      katex.render(
+        node.title.text.createdText.replace(/\s/g, "\\enspace "),
+        katexTitle
+      );
+    } catch (e) {
+      katexTitle.innerHTML = `Error 😈 ${e}`;
+    }
     li.appendChild(katexTitle);
   }
 
   // katex result
   if (node.entire_result != null) {
     const katexResult = document.createElement("div");
-    katex.render(node.entire_result, katexResult);
+    try {
+      katex.render(node.entire_result, katexResult);
+    } catch (e) {
+      katexTitle.innerHTML = `Error 😈 ${e}`;
+    }
     li.appendChild(katexResult);
   }
 

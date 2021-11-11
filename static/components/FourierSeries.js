@@ -176,17 +176,22 @@ export const FourierSeries = (app) => {
 
     app.innerHTML = "";
 
+    let response;
     try {
-      let response;
       if (complexChecked) {
         response = await post("/complex-fourier-series", encodedFunctions);
       } else {
         response = await post("/fourier-series", encodedFunctions);
       }
       console.log(response);
-      app.appendChild(renderSolution(response));
     } catch {
       ErrorResponse(app);
+    }
+
+    try {
+      app.appendChild(renderSolution(response));
+    } catch (err) {
+      ErrorResponse(app, err);
     }
   };
 
