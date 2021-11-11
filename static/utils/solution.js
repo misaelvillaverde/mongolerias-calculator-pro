@@ -8,11 +8,11 @@ let count = 0;
 const traverse = (node, unorderedList) => {
   const li = document.createElement("li");
   // title
-  if (node.title != null) {
-    const title = document.createElement("div");
-    title.classList.add("line_title");
-    title.innerText = decodeURI(node.title);
-    li.appendChild(title);
+  if (node.ctitle != null) {
+    const ctitle = document.createElement("div");
+    ctitle.classList.add("line_title");
+    ctitle.innerText = decodeURI(node.ctitle);
+    li.appendChild(ctitle);
   }
 
   // comment
