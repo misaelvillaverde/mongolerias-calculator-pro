@@ -13,7 +13,11 @@ export const FourierSeries = (app) => {
   const complexInput = document.querySelector("#complex");
   const latexOutput = document.querySelector("#output");
   const parityDiv = document.querySelector("#parity");
+  const transformInput = document.querySelector("#transform");
   periodInput.setAttribute("value", "2\\pi");
+
+  let complexChecked = false;
+  let transformChecked = false;
 
   const functions = {
     functions: [
@@ -30,8 +34,6 @@ export const FourierSeries = (app) => {
     T: periodInput.value,
   };
 
-  let complexChecked = false;
-
   const encodeFunctions = (func) => {
     // copy the functions object into new object
     const encodeResult = JSON.parse(JSON.stringify(func));
@@ -45,23 +47,27 @@ export const FourierSeries = (app) => {
 
   const updateGraph = () => {
     const graphdata = [];
-    functions.functions.forEach((f, i) => {
-      let fun, d, d_plus_T;
+    try {
+      functions.functions.forEach((f, i) => {
+        let fun, d, d_plus_T;
 
-      // parse string to int and \\pi to Math.PI
-      fun = parseISymbols(f.f);
-      d = evalFSymbols(f.d);
-      d_plus_T = evalFSymbols(f.d_plus_T);
+        // parse string to int and \\pi to Math.PI
+        fun = parseISymbols(f.f);
+        d = evalFSymbols(f.d);
+        d_plus_T = evalFSymbols(f.d_plus_T);
 
-      const func = {
-        fn: fun,
-        range: [d, d_plus_T],
-      };
-      graphdata.push(func);
-    });
+        const func = {
+          fn: fun,
+          range: [d, d_plus_T],
+        };
+        graphdata.push(func);
+      });
 
-    console.log("graph data", graphdata);
-    Graph(800, 500, graphdata);
+      console.log("graph data", graphdata);
+      Graph(800, 500, graphdata);
+    } catch (e) {
+      console.log("Graph:", e);
+    }
   };
   updateGraph();
 
@@ -180,6 +186,8 @@ export const FourierSeries = (app) => {
     try {
       if (complexChecked) {
         response = await post("/complex-fourier-series", encodedFunctions);
+      } else if (transformChecked) {
+        response = await post("/fourier-transform", encodedFunctions);
       } else {
         response = await post("/fourier-series", encodedFunctions);
       }
@@ -257,7 +265,12 @@ export const FourierSeries = (app) => {
     }
   };
 
+  const toggleTransform = () => {
+    transformChecked = !transformChecked;
+  };
+
   complexInput.addEventListener("click", toggleComplex);
+  transformInput.addEventListener("click", toggleTransform);
   periodInput.addEventListener("input", () => {
     functions.T = periodInput.value;
   });
