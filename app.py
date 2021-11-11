@@ -168,7 +168,7 @@ def fourier_series_symbo():
 
     return jsonify(global_steps)
 
-@app.route("complex-fourier-serie", methods=['POST'])
+@app.route("/complex-fourier-serie", methods=['POST'])
 def compleja():
     global_steps = []
 
@@ -310,7 +310,7 @@ def compleja():
     global_steps.append(compleja_response)
     return jsonify(global_steps)
 
-@app.route("fourier-transform", methods=['POST'])
+@app.route("/fourier-transform", methods=['POST'])
 def fourier_trans():
     T = request.json["T"]
 
